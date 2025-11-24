@@ -1,0 +1,1002 @@
+/* EtudeSync: Premium glassmorphism + rotating background (public/assets/css/style.css) */
+:root{
+  --accent1:#7c4dff;
+  --accent2:#47d7d3;
+  --glass: rgba(255,255,255,0.08);
+  --glass-strong: rgba(255,255,255,0.12);
+  --muted: rgba(255,255,255,0.85);
+  --container-max:1200px;
+}
+
+/* base */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:'Poppins', 'Inter', system-ui, Arial, sans-serif;color:#fff}
+.container{max-width:var(--container-max);margin:0 auto;padding:0 20px}
+
+/* background slider (container only; slides created by JS) */
+.bg-slider{
+    position:fixed;
+    inset:0;
+    z-index:-100;
+    overflow:hidden;
+}
+
+/* smoother fade + better clarity for 4-second rotation */
+.bg-slider .slide{
+    position:absolute;
+    inset:0;
+    background-size:cover;
+    background-position:center;
+    opacity:0;
+    transition:opacity 0.8s ease-in-out; /* UPDATED 1.2s → 0.8s */
+    filter:contrast(.97) saturate(.98);  /* slightly clearer */
+}
+
+.bg-slider .slide.visible{
+    opacity:1;
+    animation: zoomFade 4s ease-in-out; /* subtle motion */
+}
+
+@keyframes zoomFade {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+
+.bg-overlay{
+    position:fixed;
+    inset:0;
+    z-index:-90;
+    background: linear-gradient(180deg, rgba(2,6,23,0.45), rgba(2,6,23,0.25));
+    pointer-events:none;
+}
+
+/* topbar */
+.site-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;backdrop-filter: blur(6px);background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));border-bottom:1px solid rgba(255,255,255,0.04);position:sticky;top:0;z-index:60}
+.brand-left{display:flex;align-items:center;gap:12px}
+.brand-logo{width:44px;height:44px;object-fit:cover;border-radius:8px}
+.brand-name{font-weight:800;color:#fff;text-decoration:none}
+.main-nav{display:flex;gap:16px;align-items:center}
+.main-nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:10px;transition:all .15s}
+.main-nav a:hover{box-shadow:0 10px 30px rgba(124,77,255,0.08);transform:translateY(-2px);color:#fff}
+
+/* hero */
+.hero{display:flex;align-items:center;justify-content:center;height:85vh;text-align:center;padding:48px 0}
+.hero-inner{max-width:880px;padding:32px;border-radius:20px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.12);backdrop-filter: blur(12px);box-shadow: 0 20px 60px rgba(2,6,23,0.45)}
+.logo-center{width:64px;height:64px;border-radius:14px;display:block;margin:0 auto 8px}
+.hero-inner h1{font-size:2.8rem;margin:6px 0 8px;font-weight:800;letter-spacing:-0.6px}
+.tagline{opacity:0.95;font-weight:300;margin-bottom:16px}
+
+/* buttons */
+.btn{display:inline-block;padding:10px 18px;border-radius:12px;border:none;cursor:pointer;text-decoration:none}
+.btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:700;box-shadow:0 14px 40px rgba(76,52,156,0.16);transition:transform .18s,box-shadow .18s}
+.btn.primary:hover{transform:translateY(-4px);box-shadow:0 28px 70px rgba(76,52,156,0.22)}
+
+/* page hero + cards */
+.page-hero{margin:28px 0;padding:26px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);backdrop-filter: blur(8px)}
+.page-hero h1{font-size:2.2rem}
+.page-hero p.lead{color:var(--muted);margin-top:8px;font-weight:300}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:16px}
+.card{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(6px);box-shadow:0 12px 40px rgba(2,6,23,0.3)}
+
+/* auth pages */
+/* auth pages — ÉtudeSync glassmorphism style */
+.auth-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 18px;
+}
+
+.auth-wrap {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.auth-visual {
+  flex: 1;
+  min-width: 280px;
+  display: none; /* hide for now; focus on the glass card */
+}
+
+/* 🌙 GLASS EFFECT CARD */
+.glass-auth-card {
+  flex: 0 0 420px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  color: #fff;
+  padding: 40px 44px;
+  border-radius: 22px;
+  box-shadow: 0 25px 80px rgba(2, 6, 23, 0.5);
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.glass-auth-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 35px 100px rgba(76, 52, 156, 0.45);
+}
+
+/* logo + heading */
+.glass-auth-card .logo-center {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  display: block;
+  margin: 0 auto 14px;
+  object-fit: cover;
+}
+.glass-auth-card h2 {
+  font-size: 1.6rem;
+  margin: 6px 0 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* inputs */
+.auth-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  margin-bottom: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.auth-form input:focus {
+  box-shadow: 0 0 12px rgba(124, 77, 255, 0.3);
+  border-color: rgba(124, 77, 255, 0.35);
+}
+
+/* 🔥 button glow like “Get Started” */
+.btn-login {
+  display: inline-block;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  box-shadow: 0 14px 40px rgba(76, 52, 156, 0.35);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.btn-login:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 60px rgba(76, 52, 156, 0.5);
+}
+
+/* forgot link + meta links */
+.auth-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.forgot-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
+  font-size: 14px;
+}
+.meta {
+  text-align: center;
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+}
+.meta a {
+  color: #b0aaff;
+  text-decoration: underline;
+}
+
+/* flash messages */
+.flash-message {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.form-error {
+  background: rgba(255, 72, 95, 0.1);
+  border: 1px solid rgba(255, 72, 95, 0.25);
+  color: #ff9aa2;
+}
+.form-ok {
+  background: rgba(72, 255, 183, 0.1);
+  border: 1px solid rgba(72, 255, 183, 0.25);
+  color: #baffd0;
+}
+
+/* responsive */
+@media (max-width: 640px) {
+  .glass-auth-card {
+    padding: 28px 24px;
+    width: 92%;
+  }
+  .auth-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* small helpers */
+.meta{text-align:center;color:rgba(255,255,255,0.85);margin-top:12px}
+.site-footer{padding:18px;text-align:center;color:rgba(255,255,255,0.9);margin-top:28px}
+.form-error{background:#fff1f5;padding:10px;border-radius:8px;color:#6b2b4a;margin-bottom:10px}
+.form-ok{background:#f0fff6;padding:10px;border-radius:8px;color:#146a3a;margin-bottom:10px}
+
+/* responsive */
+@media(max-width:980px){
+  .hero{height:75vh;padding-top:32px}
+  .hero-inner{padding:22px}
+  .main-nav{display:none}
+}
+/* ---- small login helpers (scoped) ---- */
+.auth-viewport{ /* ensures content centers nicely within existing container */
+  /* no-op here; kept for clarity if you want to override later */
+}
+
+.login-container input{ transition: box-shadow .12s, border-color .12s; }
+
+/* make sure topbar doesn't overlap login on very small screens */
+@media (max-width:420px){
+  .site-topbar{ padding:10px; }
+  .brand-logo{ width:38px; height:38px; }
+}
+/* smoother transition for glass cards sitewide */
+.glass-auth-card, .hero-inner {
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+/* --- ÉtudeSync refined login form layout --- */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* align label and input side by side */
+.input-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.input-group label {
+  flex: 0 0 100px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 15px;
+  color: rgba(255,255,255,0.9);
+}
+.input-group input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.input-group input::placeholder {
+  color: rgba(255,255,255,0.8);
+}
+.input-group input:focus {
+  border-color: rgba(124,77,255,0.4);
+  box-shadow: 0 0 10px rgba(124,77,255,0.25);
+}
+
+/* forgot password link separate */
+.auth-actions {
+  text-align: right;
+  margin-top: 6px;
+}
+.forgot-link {
+  font-size: 14px;
+  text-decoration: underline;
+  color: rgba(255,255,255,0.9);
+  transition: color 0.2s;
+}
+.forgot-link:hover {
+  color: #b6baff;
+}
+
+/* glowing gradient button below forgot password */
+.btn-login {
+  margin-top: 14px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  box-shadow: 0 14px 40px rgba(76,52,156,0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 60px rgba(76,52,156,0.55);
+}
+
+/* small responsiveness */
+@media (max-width: 540px) {
+  .input-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .input-group label {
+    margin-bottom: 4px;
+  }
+  .auth-actions {
+    text-align: left;
+  }
+}
+/* --- Compact / compressed auth card adjustments for register page --- */
+.glass-auth-card {
+  /* slightly smaller padding, limited height so footer remains visible */
+  padding: 28px 32px;
+  border-radius: 20px;
+  max-width: 420px;
+  width: 100%;
+  max-height: calc(100vh - 160px); /* leave room for topbar + footer */
+  overflow: visible; /* avoid inner scroll unless extremely small screens */
+}
+
+/* tighten gaps inside form */
+.auth-form { gap: 12px; }
+
+/* slightly smaller inputs to reduce vertical space */
+.auth-form .input-group input {
+  padding: 10px 12px;
+  height: 44px;
+  font-size: 15px;
+}
+
+/* make show/hide buttons subtle */
+.show-pass-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.95);
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight:600;
+  font-size:13px;
+}
+
+/* reduce heading spacing */
+.glass-auth-card h2 { margin: 6px 0 14px; font-size:1.5rem; }
+
+/* tighten meta spacing */
+.meta { margin-top: 10px; font-size:15px; }
+
+/* make logo slightly smaller on the card */
+.glass-auth-card .logo-center {
+  width: 56px;
+  height: 56px;
+  margin-bottom:10px;
+}
+
+/* responsive improvements */
+@media (max-width: 640px) {
+  .glass-auth-card { padding: 20px; border-radius: 16px; max-height: calc(100vh - 120px); }
+  .auth-wrap { padding: 18px; }
+  .auth-visual { display:none; }
+  .show-pass-btn { padding:6px 8px; font-size:12px; }
+}
+/* --- Force auth card to fit viewport & ensure footer visible --- */
+.auth-page { 
+  min-height: calc(100vh - 120px); /* reduce from bigger value if present */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+/* make wrapper center and don't allow large horizontal stretching */
+.auth-wrap {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 12px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* tighter glass card so footer shows */
+.glass-auth-card {
+  padding: 20px 26px !important;
+  border-radius: 18px;
+  width: 420px;
+  max-width: calc(100% - 40px);
+  max-height: calc(100vh - 160px); /* IMPORTANT: reserves space for topbar + footer */
+  overflow: auto; /* keeps the card usable if small screens */
+  box-sizing: border-box;
+}
+
+/* reduce internal spacing */
+.auth-form { gap: 10px; }
+.auth-form .input-group input { padding: 10px 12px; height:42px; }
+.glass-auth-card h2 { margin: 6px 0 12px; font-size:1.45rem; }
+
+/* make logo smaller & make sure it shows */
+.glass-auth-card .logo-center { width:52px; height:52px; margin-bottom:8px; display:block; }
+
+/* smaller submit button */
+.btn-login { padding: 10px; font-size: 15px; border-radius:10px; }
+
+/* meta spacing */
+.meta { margin-top:10px; font-size:14.5px; }
+
+/* mobile adjustments */
+@media (max-width:640px){
+  .glass-auth-card { width: 92%; padding:16px; max-height: calc(100vh - 120px); }
+  .auth-visual { display:none !important; }
+}
+/* ===== GLOBAL STICKY FOOTER FIX ===== */
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1;
+}
+
+.site-footer {
+  margin-top: auto;
+}
+/* === FIX HEADER SHIFT AFTER FLEX LAYOUT === */
+
+/* Make header stretch full width (so container doesn't center it) */
+.site-topbar {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Keep the brand-left group anchored to left edge */
+.brand-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-start !important;
+}
+
+/* Keep nav in correct position */
+.main-nav {
+    display: flex;
+    gap: 16px;
+    margin-left: auto !important;
+}
+
+/* Ensure top-controls stay right side */
+.top-controls {
+    margin-left: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* ---------- Dashboard (glassmorphic) ---------- */
+.dashboard-wrap {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 26px 0 60px;
+}
+
+/* SIDEBAR */
+.dash-sidebar {
+  width: 220px;
+  min-height: 60vh;
+  border-radius: 16px;
+  padding: 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.45);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.sidebar-top { display:flex; align-items:center; gap:12px; }
+.brand-sm { width:42px; height:42px; border-radius:8px; object-fit:cover; }
+.sidebar-toggle {
+  margin-left:auto;
+  background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.06);
+  padding:6px 8px; border-radius:8px; cursor:pointer; font-weight:700;
+}
+
+.sidebar-nav { display:flex; flex-direction:column; gap:8px; margin-top:16px; }
+.sidebar-nav a {
+  color:var(--muted); text-decoration:none; padding:10px 12px; border-radius:10px;
+  transition:all .12s; display:flex; align-items:center; gap:8px;
+}
+.sidebar-nav a:hover, .sidebar-nav a.active { color:#fff; background: linear-gradient(90deg,var(--accent1),var(--accent2)); box-shadow:0 10px 30px rgba(76,52,156,0.12); transform:translateY(-1px); }
+
+/* profile compact */
+.sidebar-footer { margin-top:14px; }
+.profile-compact { display:flex; gap:10px; align-items:center; }
+.avatar { width:44px; height:44px; border-radius:8px; background:linear-gradient(90deg,var(--accent1),var(--accent2)); display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:18px; }
+.profile-meta .name { font-weight:700; color:#fff; }
+.profile-meta .role { font-size:12px; color:var(--muted); }
+
+/* MAIN */
+.dash-main { flex:1; display:flex; flex-direction:column; gap:20px; }
+
+/* header */
+.dash-header { display:flex; justify-content:space-between; align-items:center; padding:16px; border-radius:14px; }
+.dash-header .greet h2 { margin:0; font-size:1.3rem; }
+.dash-header .muted { color:var(--muted); margin-top:6px; }
+.header-actions { display:flex; gap:10px; align-items:center; }
+.btn.small { padding:8px 10px; border-radius:10px; font-weight:700; background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#fff; border:none; }
+.btn.small.outline { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); }
+
+/* stat cards */
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; }
+.stat-card { padding:14px; border-radius:12px; text-align:left; display:flex; flex-direction:column; gap:8px; }
+.stat-card .stat-icon { font-size:20px; }
+.stat-card .stat-value { font-size:1.6rem; font-weight:800; }
+.stat-label { color:var(--muted); }
+
+/* main grid (panels) */
+.main-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+.panel { padding:14px; border-radius:12px; min-height:140px; }
+.panel-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.file-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; color:var(--muted); }
+
+/* pomodoro */
+.pomodoro { display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; }
+.pom-time { font-size:2.0rem; font-weight:800; }
+.pom-controls { display:flex; gap:10px; }
+
+/* glass card base */
+.glass-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 18px 50px rgba(2,6,23,0.45);
+}
+
+/* collapsed sidebar */
+body.sidebar-collapsed .dash-sidebar { width:64px; min-width:64px; }
+body.sidebar-collapsed .sidebar-nav a { text-align:center; padding-left:0; padding-right:0; }
+body.sidebar-collapsed .brand-sm { margin:0 auto; }
+body.sidebar-collapsed .profile-compact .profile-meta { display:none; }
+
+/* responsiveness */
+@media (max-width: 980px) {
+  .dashboard-wrap { flex-direction:column; padding:16px 0 40px; }
+  .dash-sidebar { width:100%; display:flex; flex-direction:row; align-items:center; padding:10px; gap:12px; }
+  .sidebar-nav { flex-direction:row; gap:10px; margin-top:0; overflow:auto; }
+  .main-grid { grid-template-columns:1fr; }
+}
+/* ---------------- Services page: 6 module cards (glassmorphic) ---------------- */
+/* ===== Services: equal-height cards + highlighted testimonials ===== */
+
+/* ensure grid items stretch equally */
+.services-grid {
+  align-items: stretch; /* ensure grid children stretch */
+}
+
+/* make each card take full height of grid cell */
+.service-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* layout inside card: left (text) + right (icon) */
+.service-card .card-inner {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;        /* allow left column to stretch */
+  padding: 20px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.35);
+  min-height: 220px;           /* ensures consistent base height */
+  box-sizing: border-box;
+}
+
+/* left column stretches vertically and uses column layout */
+.card-left {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* pushes testimonial to bottom */
+  color: #fff;
+}
+
+/* keep title & points at top, testimonial at bottom */
+.service-title { margin: 0 0 8px 0; font-size: 1.15rem; font-weight: 700; }
+.service-points {
+  margin: 8px 0 12px 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.45;
+  flex: 0 0 auto;
+}
+
+/* testimonial block now highlighted */
+.testimonial {
+  margin: 12px 0 0 0;
+  font-size: 0.95rem;
+  color: #0b0820;
+  background: linear-gradient(90deg, rgba(124,77,255,0.12), rgba(71,215,211,0.12));
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(11,8,32,0.18);
+  border-left: 0; /* remove old vertical bar */
+}
+
+/* right column (icon) stays fixed width and centered vertically */
+.card-right {
+  width: 110px;                 /* slightly larger for visual balance */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* icon sizing */
+.service-icon {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: linear-gradient(90deg,var(--accent1),var(--accent2));
+  padding: 8px;
+  box-shadow: 0 12px 30px rgba(2,6,23,0.35);
+}
+
+/* premium badge keep on top-right */
+.premium-badge {
+  top: 14px;
+  right: 14px;
+}
+
+/* responsive: stack columns but keep testimonial highlighted */
+@media (max-width: 820px) {
+  .service-card .card-inner { flex-direction: column; gap:12px; padding:16px; min-height: auto; }
+  .card-right { width:100%; justify-content:flex-start; }
+  .service-icon { width:56px; height:56px; }
+  .premium-badge { top: 10px; right: 10px; padding:5px 8px; font-size:11px; }
+}
+/* --- About Page styling --- */
+.about-hero {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  backdrop-filter:blur(18px);
+  margin:40px auto;
+  border-radius:20px;
+  max-width:880px;
+}
+.about-hero .highlight {
+  color: var(--accent2);
+  font-size:2.4rem;
+  font-weight:800;
+}
+
+.about-awards {
+  padding:40px 20px;
+  text-align:center;
+}
+.awards-list {
+  list-style:none;
+  padding:0;
+  margin:0 auto;
+  max-width:600px;
+  color:var(--muted);
+}
+.awards-list li {
+  margin-bottom:12px;
+  font-size:1rem;
+}
+
+.about-marquee {
+  padding:60px 0 30px;
+  overflow:hidden;
+}
+.marquee-container {
+  width:100%;
+  overflow:hidden;
+}
+.marquee {
+  display:flex;
+  gap:20px;
+  animation: marqueeScroll 30s linear infinite;
+}
+.marquee img {
+  width:160px;
+  height:160px;
+  object-fit:cover;
+  border-radius:12px;
+  border:2px solid rgba(255,255,255,0.12);
+}
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.about-testimonials {
+  padding:40px 20px;
+  text-align:center;
+}
+.testimonials-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:28px;
+  max-width:960px;
+  margin:0 auto;
+}
+.testimonial {
+  background: rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.10);
+  backdrop-filter:blur(12px);
+  padding:24px 20px;
+  border-radius:14px;
+  color:#fff;
+  font-size:0.95rem;
+  line-height:1.45;
+}
+/* ========== ABOUT PAGE: single glass card layout ========== */
+.about-wrap {
+  padding: 48px 20px;
+  display:flex;
+  justify-content:center;
+}
+
+/* The outer glass card that contains everything */
+.about-card {
+  width: 100%;
+  max-width: 1100px;
+  padding: 26px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 30px 80px rgba(2,6,23,0.5);
+  display:flex;
+  flex-direction:column;
+  gap: 28px;
+}
+
+/* section inside the card */
+.about-section { padding: 6px 4px; }
+
+/* Intro */
+.about-intro { text-align:center; }
+.about-logo { width:64px; height:64px; border-radius:12px; display:block; margin:0 auto 8px; object-fit:cover; }
+.about-text { color: var(--muted); max-width:900px; margin: 10px auto 0 auto; }
+
+/* TESTIMONIALS MARQUEE */
+.testimonials-section h2 { text-align:left; margin-bottom:12px; }
+.testimonials-marquee { overflow:hidden; width:100%; }
+.testimonials-track {
+  display:flex;
+  gap:14px;
+  animation: testimonialsScroll 28s linear infinite;
+  align-items:stretch;
+}
+
+/* each testimonial is a colored card */
+.testimonial-block {
+  min-width: 320px;
+  max-width: 340px;
+  background: linear-gradient(90deg, rgba(124,77,255,0.08), rgba(71,215,211,0.06));
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 16px;
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(2,6,23,0.3);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.testimonial-text { font-weight:600; margin:0 0 8px 0; color:#fff; }
+.testimonial-who { font-size:0.9rem; color:rgba(255,255,255,0.9); text-align:right; }
+
+/* pause animation when .paused present */
+.testimonials-marquee.paused .testimonials-track,
+.photos-marquee.paused .photos-track {
+  animation-play-state: paused !important;
+}
+
+@keyframes testimonialsScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* because content duplicated */
+}
+
+/* AWARDS */
+.awards-section h2 { text-align:left; margin-bottom:14px; }
+.awards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+.award { display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:12px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); }
+.award-num { font-size:1.6rem; width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:10px; background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#fff; }
+.award-title { font-weight:700; }
+.award-sub { color:var(--muted); font-size:0.95rem; }
+
+/* PHOTOS MARQUEE */
+.photos-section h2 { text-align:left; margin-bottom:12px; }
+.photos-marquee { overflow:hidden; width:100%; border-radius:12px; padding:8px 0; background: rgba(255,255,255,0.01); }
+.photos-track {
+  display:flex;
+  gap:14px;
+  padding:8px 6px;
+  animation: photosScroll 36s linear infinite;
+}
+.photo-cell { flex:0 0 auto; width:140px; height:140px; border-radius:12px; overflow:hidden; border:2px solid rgba(255,255,255,0.06); }
+.photo-cell img { width:100%; height:100%; object-fit:cover; display:block; }
+
+/* duplicate arrays are longer — scroll left */
+@keyframes photosScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* JOIN CTA */
+.join-section { padding:14px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); }
+.join-inner { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.big-number { font-size:1.6rem; font-weight:800; }
+.join-sub { color:var(--muted); }
+.btn.large { padding:12px 18px; font-size:1.05rem; border-radius:12px; }
+
+/* responsive */
+@media (max-width: 900px) {
+  .about-card { padding:18px; gap:20px; }
+  .testimonials-track { gap:10px; }
+  .testimonial-block { min-width:260px; max-width:280px; }
+  .photo-cell { width:110px; height:110px; }
+  .join-inner { flex-direction:column; align-items:flex-start; gap:12px; }
+}
+/* =======================
+   DASHBOARD ONLY STYLING (tweaks)
+   ======================= */
+
+/* hide global slider/overlay on dashboard */
+.dashboard-page .bg-slider,
+.dashboard-page .bg-overlay {
+    display: none !important;
+}
+
+/* ---------- background video ---------- */
+.dashboard-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -120;           /* keep behind all UI */
+    overflow: hidden;
+    pointer-events: none;    /* allow clicks to pass through */
+}
+
+/* video sizing & visual tweak */
+.dashboard-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.95) contrast(1.02); /* slightly brighter so it shows through glass */
+    will-change: transform;
+}
+
+/* overlay that sits above the video but still behind content */
+.dashboard-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.12));
+    pointer-events: none;
+}
+
+/* ---------- main wrapper ---------- */
+.dashboard-content {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    position: relative; /* ensure layering works */
+    z-index: 2;         /* above video + overlay */
+}
+
+/* ---------- main glass card (softer & slightly lower) ---------- */
+.dashboard-glass {
+    width: 100%;
+    max-width: 1100px;
+    padding: 26px; /* slightly reduced padding */
+    border-radius: 22px;
+    background: rgba(255,255,255,0.02);       /* slightly more transparent */
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.38);
+    text-align: center;
+    position: relative;
+    z-index: 3;
+    transform: translateY(18px); /* nudge lower so it visually centers with background */
+}
+
+/* ---------- welcome ---------- */
+.dash-title {
+    font-size: 2rem;
+    margin-bottom: 6px;
+    font-weight: 800;
+}
+.dash-title span { color: #a8d8ff; }
+.dash-tagline { opacity: .95; margin-bottom: 26px; font-size: 1.15rem; color: var(--muted); }
+
+/* ---------- grid (generic) ---------- */
+.dash-modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 18px; }
+
+/* ---------- module cards (tighter spacing + hover glow & scale) ---------- */
+.module-card {
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    padding:20px; border-radius:14px;
+    background: rgba(255,255,255,0.035);
+    border:1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.42);
+    text-decoration:none; color:#fff; transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s ease, filter .18s ease;
+    min-height:140px; position:relative;
+}
+.module-card:hover{
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 34px 90px rgba(0,0,0,0.52), 0 0 20px rgba(124,77,255,0.12);
+    filter: saturate(1.05);
+}
+
+.module-icon { width:68px; height:68px; object-fit:contain; border-radius:8px; background:linear-gradient(90deg,var(--accent1),var(--accent2)); padding:8px; box-shadow: 0 10px 30px rgba(0,0,0,0.38); }
+.module-name { font-weight:800; margin-top:6px; font-size:1.05rem; text-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+
+/* lock badge (rounded pill) */
+.lock-badge { position:absolute; right:10px; top:10px; background: linear-gradient(90deg,#7c4dff,#47d7d3); color:#fff; padding:6px 10px; border-radius:999px; font-weight:800; font-size:12px; }
+
+/* small upgrade toast (same behaviour) */
+.upgrade-toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); color:#fff; padding:10px 16px; border-radius:8px; opacity:0; transition:all .35s; z-index:120; }
+.upgrade-toast.visible { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ========= Header (compact) ========= */
+.site-topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 20px; }
+.brand-left{ display:flex; align-items:center; gap:12px; }
+.header-controls { display:flex; gap:12px; align-items:center; }
+.header-icon { background:transparent; border:none; color:var(--muted); font-size:18px; padding:8px; border-radius:8px; cursor:pointer; text-decoration:none; }
+.header-icon:hover { background: rgba(255,255,255,0.03); color:#fff; }
+
+/* small primary login button fallback */
+.btn.primary.small { padding:6px 10px; border-radius:8px; font-weight:700; }
+
+/* profile avatar tweaks: subtle ring and hover scaling */
+.profile-avatar { width:34px; height:34px; border-radius:8px; object-fit:cover; transition: transform .15s ease, box-shadow .15s ease; box-shadow: 0 0 0 2px rgba(159,214,255,0.06); }
+.profile-pill:hover .profile-avatar { transform: scale(1.06); box-shadow: 0 6px 20px rgba(124,77,255,0.12); }
+
+/* ========= Dashboard layout (3x2 grid) fine tuning ========= */
+.dash-modules-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; align-items:stretch; }
+
+/* responsive: collapse to 2 cols then 1 */
+@media (max-width: 980px) {
+  .dash-modules-grid { grid-template-columns: repeat(2, 1fr); gap:12px; }
+  .module-icon { width:60px; height:60px; }
+}
+@media (max-width: 560px) {
+  .dash-modules-grid { grid-template-columns: 1fr; gap:12px; }
+  .dashboard-glass { padding:18px; transform: translateY(8px); }
+}
