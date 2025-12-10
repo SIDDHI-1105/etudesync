@@ -14,14 +14,27 @@ require_once __DIR__ . '/../includes/header_dashboard.php';
 <!-- apply dashboard background/video styling -->
 <script>document.body.classList.add('dashboard-page');</script>
 
+<!-- Dashboard-style background (video + fallback image).
+     Make sure the files exist in public/assets/... so they are web-accessible.
+     - Poster/fallback image: assets/images/collab-bg.png
+     - Video file: assets/videos/desk1.mp4
+     - Logo image: assets/images/collab-logo.png -->
+<div class="dashboard-bg" aria-hidden="true">
+  <video id="dashVideo" autoplay muted loop playsinline poster="assets/images/collab-bg.png">
+    <source src="assets/videos/desk1.mp4" type="video/mp4">
+    <!-- If the browser can't play the video, CSS background will show -->
+  </video>
+  <div class="dashboard-bg-overlay"></div>
+</div>
+
 <link rel="stylesheet" href="assets/css/collab.css?v=2" />
 
 <div class="collab-viewport">
   <div class="collab-hero">
     <div class="collab-card" style="max-width:720px; margin:0 auto;">
       <div class="collab-card-head" style="align-items:center;">
-        <!-- development fallback image (uploaded); copy into assets/images for production -->
-        <img src="/mnt/data/1f5368f1-3156-47a6-8117-295468d61947.png" alt="Join Room" class="collab-logo" style="width:72px;height:72px;" />
+        <!-- production-friendly logo path -->
+        <img src="assets/images/collab-logo.png" alt="Join Room" class="collab-logo" style="width:72px;height:72px;" />
         <h1>Join a Room</h1>
         <p class="lead">Have a room code? Enter it below to join your study room instantly.</p>
       </div>

@@ -9,7 +9,8 @@ require_once __DIR__ . '/../includes/header_public.php';
   <p class="lead">ÉtudeSync provides tools to help students, teachers and professionals collaborate, learn, and stay focused — all from one tidy study desk.</p>
 
   <ul class="services-grid" role="list">
-    <!-- CollabSphere -->
+
+    <!-- CollabSphere (Rooms) - FREE -->
     <li class="service-card glass-card">
       <div class="card-inner">
         <div class="card-left">
@@ -29,27 +30,7 @@ require_once __DIR__ . '/../includes/header_public.php';
       </div>
     </li>
 
-    <!-- InfoVault -->
-    <li class="service-card glass-card">
-      <div class="card-inner">
-        <div class="card-left">
-          <h3 class="service-title">InfoVault (Knowledge Hub)</h3>
-          <ul class="service-points">
-            <li>Upload/download PDFs & images with tags</li>
-            <li>Organize with folders or tags & favorites</li>
-            <li>Create flashcards & review mode (flip, mark)</li>
-            <li>Fast search by tag / title</li>
-          </ul>
-          <blockquote class="testimonial">“All my notes in one place — searching is instant.” — <strong>Dr. Iyer, Tutor</strong></blockquote>
-        </div>
-
-        <div class="card-right">
-          <img src="assets/images/icon-infovault.png" alt="InfoVault icon" class="service-icon" />
-        </div>
-      </div>
-    </li>
-
-    <!-- FocusFlow -->
+    <!-- FocusFlow (Productivity Zone) - FREE -->
     <li class="service-card glass-card">
       <div class="card-inner">
         <div class="card-left">
@@ -69,64 +50,69 @@ require_once __DIR__ . '/../includes/header_public.php';
       </div>
     </li>
 
-    <!-- AssessArena -->
-    <li class="service-card glass-card">
-      <div class="card-inner">
-        <div class="card-left">
-          <h3 class="service-title">AssessArena (Quizzes)</h3>
-          <ul class="service-points">
-            <li>Teachers create MCQ quizzes with shareable codes</li>
-            <li>Students take quizzes, get instant scores</li>
-            <li>Result history + leaderboard per quiz</li>
-            <li>Basic stats to track learning progress</li>
-          </ul>
-          <blockquote class="testimonial">“Quick quizzes helped me brush up before tests.” — <strong>Anya, University</strong></blockquote>
-        </div>
+<!-- MindPlay (Journal + Games) - FREE (single-user only) -->
+<li class="service-card glass-card">
+  <div class="card-inner">
+    <div class="card-left">
+      <h3 class="service-title">MindPlay (Personal Journal & Games)</h3>
+      <ul class="service-points">
+        <li>Private journal (write, search, export entries)</li>
+        <li>Mini single-player games with local scoring and server leaderboards</li>
+        <li>Personal badges to reward progress (single-user achievements)</li>
+      </ul>
+      <blockquote class="testimonial">“I used the journal and the quick games between study sessions — it helped me reset.” — <strong>Vikram, Student</strong></blockquote>
+    </div>
 
-        <div class="card-right">
-          <img src="assets/images/icon-assessarena.png" alt="AssessArena icon" class="service-icon" />
-        </div>
-      </div>
-    </li>
+    <div class="card-right">
+      <img src="assets/images/icon-mindplay.png" alt="MindPlay icon" class="service-icon" />
+    </div>
+  </div>
+</li>
 
-    <!-- MindSpace (Premium) -->
+
+    <!-- --- PREMIUM FEATURES BELOW: keep them lower in the list --- -->
+<!-- QuizForge (Quizzes & Live Rooms) - PREMIUM
+     Anyone can create a quiz and publish a room code; participants join the quiz-room,
+     play in real-time, receive automatic evaluation and per-user reports. -->
+<li class="service-card glass-card premium-card">
+  <div class="card-inner">
+    <div class="card-left">
+      <h3 class="service-title">QuizForge (Quizzes & Live Rooms) <span class="premium-tag" aria-hidden="true">Premium</span></h3>
+      <ul class="service-points">
+        <li>Anyone can create a quiz and publish a Quiz Room code</li>
+        <li>Participants join the quiz room, play in real-time (synchronized questions)</li>
+        <li>Automatic evaluation during/after play and individual reports</li>
+        <li>Result history, per-quiz leaderboard and exportable reports</li>
+      </ul>
+      <blockquote class="testimonial">“We joined a QuizForge room and got instant reports — very useful for quick practice.” — <strong>Amy, Learner</strong></blockquote>
+    </div>
+
+    <div class="card-right">
+      <img src="assets/images/icon-quizforge.png" alt="QuizForge icon" class="service-icon" />
+    </div>
+  </div>
+
+  <div class="premium-badge" aria-hidden="true">🔒 Premium</div>
+</li>
+
+
+    <!-- InfoVault (Knowledge Hub) - PREMIUM -->
     <li class="service-card glass-card premium-card">
       <div class="card-inner">
         <div class="card-left">
-          <h3 class="service-title">MindSpace (Wellness) <span class="premium-tag" aria-hidden="true">Premium</span></h3>
+          <h3 class="service-title">InfoVault (Knowledge Hub) <span class="premium-tag" aria-hidden="true">Premium</span></h3>
           <ul class="service-points">
-            <li>Daily mood tracker (emoji) and private journal</li>
-            <li>Habit tracker with simple calendar view</li>
-            <li>Rotate motivational quotes from DB</li>
-            <li>Small analytics for streaks (optional)</li>
+            <li>Upload/download PDFs & images with tags</li>
+            <li>Organize with folders or tags & favorites</li>
+            <li>Create flashcards & review mode (flip, mark)</li>
+            <li>Fast search by tag / title</li>
+            <li>Mindmap maker (visual node maps, drag & connect, export PNG/SVG)</li>
           </ul>
-          <blockquote class="testimonial">“A tiny space to reflect kept my study habits consistent.” — <strong>Maya, Teacher</strong></blockquote>
+          <blockquote class="testimonial">“All my notes in one place — searching is instant.” — <strong>Dr. Iyer, Tutor</strong></blockquote>
         </div>
 
         <div class="card-right">
-          <img src="assets/images/icon-mindspace.png" alt="MindSpace icon" class="service-icon" />
-        </div>
-      </div>
-
-      <div class="premium-badge" aria-hidden="true">🔒 Premium</div>
-    </li>
-
-    <!-- SocialHub (Premium) -->
-    <li class="service-card glass-card premium-card">
-      <div class="card-inner">
-        <div class="card-left">
-          <h3 class="service-title">SocialHub (Community)</h3>
-          <ul class="service-points">
-            <li>Join 7–21 day challenges (track progress)</li>
-            <li>Earn coins & badges for milestones</li>
-            <li>Mini single-player JS games & leaderboards</li>
-            <li>Simple challenge join/track features</li>
-          </ul>
-          <blockquote class="testimonial">“Challenges kept me accountable — I loved the badges!” — <strong>Rahul, Student</strong></blockquote>
-        </div>
-
-        <div class="card-right">
-          <img src="assets/images/icon-socialhub.png" alt="SocialHub icon" class="service-icon" />
+          <img src="assets/images/icon-infovault.png" alt="InfoVault icon" class="service-icon" />
         </div>
       </div>
 

@@ -2,9 +2,13 @@
 // public/room.php
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
+// Dev helper while debugging — remove or set to 0 for production
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../includes/db.php';           // provides $pdo
 require_once __DIR__ . '/../includes/header_dashboard.php'; // dashboard header
-
 
 // require login
 if (empty($_SESSION['user_id'])) {
@@ -76,10 +80,10 @@ if (!empty($room['thumbnail'])) {
         $room_thumbnail = $room['thumbnail'];
     }
 } else {
-    // dev fallback: use uploaded image (you can copy it to assets/images later)
-    if (file_exists('/mnt/data/affbdf41-2655-47ad-8304-5e3c61138048.png')) {
-        $room_thumbnail = '/mnt/data/affbdf41-2655-47ad-8304-5e3c61138048.png';
-    } else if (!file_exists(__DIR__ . '/' . $room_thumbnail)) {
+    // dev fallback: prefer public asset
+    if (file_exists(__DIR__ . '/../assets/images/collab-bg.jpg')) {
+        $room_thumbnail = 'assets/images/collab-bg.jpg';
+    } else {
         $room_thumbnail = 'assets/images/placeholder-room.png';
     }
 }
@@ -102,7 +106,21 @@ function e($s) {
 .glass-card { background: rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:12px; }
 .small-muted { color:var(--muted); font-size:0.9rem; }
 .room-panel { padding:12px; border-radius:10px; }
+.chat-row { display:flex; gap:10px; align-items:flex-start; padding:8px; border-radius:8px; }
+.chat-avatar { width:40px; height:40px; border-radius:8px; object-fit:cover; }
+.chat-body { flex:1; }
+.chat-meta { font-size:0.85rem; color:var(--muted); display:flex; gap:8px; align-items:center; }
+.chat-text { margin-top:6px; white-space:pre-wrap; }
+.chat-actions { display:flex; gap:8px; align-items:center; }
 </style>
+
+<!-- Background (single block) -->
+<div class="dashboard-bg" aria-hidden="true">
+  <video id="dashVideo" autoplay muted loop playsinline poster="assets/images/collab-bg.jpg">
+    <source src="assets/videos/desk1.mp4" type="video/mp4">
+  </video>
+  <div class="dashboard-bg-overlay"></div>
+</div>
 
 <div class="collab-viewport" style="padding-top:18px;">
   <div class="collab-hero" style="align-items:flex-start; justify-content:center;">
@@ -135,9 +153,11 @@ function e($s) {
               <div style="color:var(--muted);text-align:center;padding-top:40px">No messages yet.</div>
             </div>
 
-            <form id="chatForm" style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+            <!-- CHAT FORM (fallback JS send to avoid page navigation) -->
+            <form id="chatForm" onsubmit="return false;" style="display:flex;gap:8px;align-items:center;margin-top:8px;">
               <input id="chatInput" type="text" placeholder="Write a message..." style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff" />
-              <button type="submit" class="btn primary small">Send</button>
+              <!-- button is type="button" so it never performs native submit -->
+              <button id="chatSendBtn" type="button" class="btn primary small">Send</button>
             </form>
           </div>
 
@@ -227,88 +247,74 @@ const USER_ID = <?= (int)$uid ?>;
 const CAN_MANAGE = <?= $canManage ? 'true' : 'false' ?>;
 </script>
 
-<script src="assets/js/whiteboard.js?v=1"></script>
-<script src="assets/js/chat.js?v=1"></script>
-<script src="assets/js/files.js?v=1"></script>
-<script src="assets/js/participants.js?v=1"></script>
+<!-- load core feature scripts (chat has fallback inline below) -->
+<script src="assets/js/whiteboard.js?v=1" defer></script>
+<script src="assets/js/chat.js?v=1" defer></script>
+<script src="assets/js/files.js?v=1" defer></script>
+<script src="assets/js/participants.js?v=1" defer></script>
 
+<!-- Inline fallback send logic (works even if chat.js didn't bind or failed) -->
 <script>
-document.getElementById('copyLinkBtn').addEventListener('click', function() {
-  const url = window.location.origin + window.location.pathname + '?room_id=' + ROOM_ID + (ROOM_CODE ? '&code=' + encodeURIComponent(ROOM_CODE) : '');
-  navigator.clipboard?.writeText(url).then(() => {
-    this.textContent = 'Copied';
-    setTimeout(()=> this.textContent = 'Copy Link', 1500);
-  }).catch(()=> {
-    alert('Copy failed — please select the URL manually: ' + url);
-  });
-});
+(function(){
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSendBtn');
+  const chatList = document.getElementById('chatList');
 
-async function fetchPolls() {
-  const area = document.getElementById('pollArea');
-  area.innerHTML = '<div style="color:var(--muted)">Loading polls…</div>';
-  try {
-    const res = await fetch('api/get_polls.php?room_id=' + encodeURIComponent(ROOM_ID));
-    if (!res.ok) throw new Error('Network error');
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) {
-      area.innerHTML = '<div style="color:var(--muted)">No polls yet.</div>';
-      return;
+  if (!sendBtn || !chatInput || !chatList) return;
+
+  async function sendMessageFallback() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    sendBtn.disabled = true;
+    const prevText = sendBtn.textContent;
+    sendBtn.textContent = 'Sending…';
+    try {
+      const fd = new FormData();
+      fd.append('room_id', ROOM_ID);
+      fd.append('message', text);
+      const res = await fetch('api/send_message.php', { method: 'POST', body: fd, credentials: 'same-origin' });
+      if (!res.ok) {
+        console.error('send_message responded', res.status);
+        alert('Send failed (network).');
+        return;
+      }
+      const j = await res.json();
+      if (j.success && j.message) {
+        const m = j.message;
+        const row = document.createElement('div');
+        row.className = 'chat-row' + (m.is_pinned ? ' pinned' : '');
+        row.dataset.id = m.message_id;
+        row.innerHTML = `
+          <img class="chat-avatar" src="${m.avatar_path || 'assets/images/profile-placeholder.png'}" alt="${(m.user_name||'User')}">
+          <div class="chat-body">
+            <div class="chat-meta"><span class="chat-user">${(m.user_name||'User')}</span> <span class="chat-time">${new Date(m.created_at).toLocaleTimeString()}</span></div>
+            <div class="chat-text">${(m.message || '')}</div>
+          </div>
+        `;
+        chatList.appendChild(row);
+        chatList.scrollTo({ top: chatList.scrollHeight, behavior: 'smooth' });
+        chatInput.value = '';
+      } else {
+        alert(j.error || 'Send failed');
+      }
+    } catch (err) {
+      console.error('Send failed', err);
+      alert('Send failed — check console/network.');
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = prevText;
     }
-    area.innerHTML = '';
-    data.forEach(poll => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'glass-card';
-      wrapper.style.marginBottom = '8px';
-      wrapper.innerHTML = `<div style="font-weight:700">${escapeHtml(poll.question)}</div>`;
-      const list = document.createElement('div');
-      list.style.marginTop = '8px';
-      poll.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'btn small outline';
-        btn.style.display = 'block';
-        btn.style.width = '100%';
-        btn.style.marginBottom = '6px';
-        btn.textContent = `${opt.label} — (${opt.votes})`;
-        btn.onclick = () => castVote(poll.id, opt.id);
-        list.appendChild(btn);
-      });
-      wrapper.appendChild(list);
-      area.appendChild(wrapper);
-    });
-  } catch (err) {
-    area.innerHTML = '<div style="color:var(--muted)">Failed to load polls.</div>';
-    console.error(err);
   }
-}
-function escapeHtml(s){ return (''+s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
-async function castVote(pollId, optionId){ await fetch('api/cast_vote.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({poll_id:pollId,option_id:optionId,user_id:USER_ID})}); fetchPolls(); }
-document.getElementById('createPollBtn')?.addEventListener('click', async function(){
-  const q = document.getElementById('pollQ').value.trim();
-  const o1 = document.getElementById('pollOpt1').value.trim();
-  const o2 = document.getElementById('pollOpt2').value.trim();
-  if (!q || !o1 || !o2) { alert('Enter a question and at least two options.'); return; }
-  try {
-    const res = await fetch('api/create_poll.php', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({room_id: ROOM_ID, question: q, options: [o1,o2]})});
-    const data = await res.json();
-    if (data.success) { document.getElementById('pollQ').value=''; document.getElementById('pollOpt1').value=''; document.getElementById('pollOpt2').value=''; fetchPolls(); }
-    else alert(data.error || 'Failed to create poll');
-  } catch(err){ console.error(err); alert('Failed to create poll'); }
-});
-fetchPolls();
+
+  sendBtn.addEventListener('click', sendMessageFallback);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessageFallback();
+    }
+  });
+})();
 </script>
-<link rel="stylesheet" href="assets/css/collab.css?v=1" />
-<script>document.body.classList.add('dashboard-page');</script>
-<!-- Dashboard-style background (video + fallback image).
-     Fallback image currently points to the uploaded dev file path.
-     If you prefer a project-local copy, copy the file to public/assets/images/collab-bg.png
-     and update the CSS to use that relative path instead. -->
-<div class="dashboard-bg" aria-hidden="true" style="background-image: url('/mnt/data/affbdf41-2655-47ad-8304-5e3c61138048.png');">
-  <video id="dashVideo" autoplay muted loop playsinline>
-    <source src="assets/videos/desk1.mp4" type="video/mp4">
-    <!-- If video is missing the CSS background-image above will show -->
-  </video>
-  <div class="dashboard-bg-overlay"></div>
-</div>
 
 <?php
 require_once __DIR__ . '/../includes/footer.php';

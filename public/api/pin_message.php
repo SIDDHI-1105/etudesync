@@ -12,7 +12,6 @@ $pin = isset($_POST['pin']) ? (int)$_POST['pin'] : 1;
 if ($message_id <= 0) { echo json_encode(['success'=>false,'error'=>'Invalid']); exit; }
 
 try {
-  // check if actor is author OR has host/mod role in participants
   $m = $pdo->prepare("SELECT user_id, room_id FROM messages WHERE message_id = :id LIMIT 1");
   $m->execute([':id'=>$message_id]);
   $row = $m->fetch(PDO::FETCH_ASSOC);
@@ -30,7 +29,7 @@ try {
 
   $u = $pdo->prepare("UPDATE messages SET is_pinned = :pin WHERE message_id = :id");
   $u->execute([':pin'=>$pin, ':id'=>$message_id]);
-  echo json_encode(['success'=>true]);
+  echo json_encode(['success'=>true,'pinned'=>$pin]);
   exit;
 } catch (PDOException $e) {
   echo json_encode(['success'=>false,'error'=>$e->getMessage()]);

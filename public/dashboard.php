@@ -5,7 +5,6 @@ require_once __DIR__ . '/../includes/auth.php';
 
 // protect page
 if (empty($_SESSION['user_id'])) {
-    // store current URI so user returns here after login
     $_SESSION['after_login_redirect'] = $_SERVER['REQUEST_URI'] ?? 'dashboard.php';
     $_SESSION['error'] = 'Please sign in to access the dashboard.';
     header('Location: login.php');
@@ -24,11 +23,10 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
-<!-- Local single video background (only one video will play) -->
+<!-- Local video background -->
 <div class="dashboard-bg">
   <video id="dashVideo" autoplay muted loop playsinline>
     <source src="assets/videos/desk1.mp4" type="video/mp4">
-    <!-- fallback static image -->
   </video>
   <div class="dashboard-bg-overlay"></div>
 </div>
@@ -39,17 +37,11 @@ document.addEventListener('DOMContentLoaded', function(){
     <h2 class="dash-title">Good to see you, <span class="dash-user"><?= $userName ?></span></h2>
     <p id="dash-quote" class="dash-tagline">A neat study desk in your browser — focus without distractions.</p>
 
-    <!-- modules grid: 3 columns on top, 3 columns on bottom (2 rows) -->
+    <!-- ROW 1: FREE MODULES (grid) -->
     <div class="dash-modules-grid">
-      <!-- UPDATED: link now points to collabsphere.php -->
       <a href="collabsphere.php" class="module-card">
         <img src="assets/images/icon-collabsphere.png" alt="CollabSphere" class="module-icon" />
         <div class="module-name">CollabSphere</div>
-      </a>
-
-      <a href="infovault.php" class="module-card">
-        <img src="assets/images/icon-infovault.png" alt="InfoVault" class="module-icon" />
-        <div class="module-name">InfoVault</div>
       </a>
 
       <a href="focusflow.php" class="module-card">
@@ -57,20 +49,23 @@ document.addEventListener('DOMContentLoaded', function(){
         <div class="module-name">FocusFlow</div>
       </a>
 
-      <a href="assessarena.php" class="module-card">
-        <img src="assets/images/icon-assessarena.png" alt="AssessArena" class="module-icon" />
-        <div class="module-name">AssessArena</div>
+      <a href="mindplay.php" class="module-card">
+        <img src="assets/images/icon-mindplay.png" alt="MindPlay" class="module-icon" />
+        <div class="module-name">MindPlay</div>
       </a>
+    </div>
 
-      <a href="#" class="module-card locked">
-        <img src="assets/images/icon-mindspace.png" alt="MindSpace" class="module-icon" />
-        <div class="module-name">MindSpace</div>
+    <!-- ROW 2: PREMIUM MODULES (centered flex row) -->
+    <div class="dash-premium-row">
+      <a href="quizforge.php" class="module-card locked">
+        <img src="assets/images/icon-quizforge.png" alt="QuizForge" class="module-icon" />
+        <div class="module-name">QuizForge</div>
         <span class="lock-badge">🔒 Premium</span>
       </a>
 
-      <a href="#" class="module-card locked">
-        <img src="assets/images/icon-socialhub.png" alt="SocialHub" class="module-icon" />
-        <div class="module-name">SocialHub</div>
+      <a href="infovault.php" class="module-card locked">
+        <img src="assets/images/icon-infovault.png" alt="InfoVault" class="module-icon" />
+        <div class="module-name">InfoVault</div>
         <span class="lock-badge">🔒 Premium</span>
       </a>
     </div>
@@ -80,13 +75,14 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <script>
 (function(){
+
   // rotate quotes every 6 seconds
   const quotes = [
     "A neat study desk in your browser — focus without distractions.",
-    "Create short study rooms and stay focused with friends.",
+    "Create study rooms and stay focused with friends.",
     "Upload notes, create flashcards and revise smarter.",
     "Pomodoro + planner = better study flow.",
-    "Quizzes, leaderboards and progress — see how you improve."
+    "Quizzes, leaderboards and progress — see your improvement."
   ];
   let qIdx = 0;
   const qEl = document.getElementById('dash-quote');
@@ -98,21 +94,22 @@ document.addEventListener('DOMContentLoaded', function(){
         qEl.textContent = quotes[qIdx];
         qEl.style.opacity = 1;
       }, 300);
-    }, 6000); // 6000 ms = 6 seconds
+    }, 6000);
   }
 
-  // locked modules: show upgrade toast / modal (simple)
-  // NOTE: only intercept clicks for locked modules now (previous code prevented ALL links)
+  // locked modules→ show upgrade toast
   document.querySelectorAll('.module-card.locked').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      // small non-blocking toast
       const t = document.createElement('div');
       t.className = 'upgrade-toast';
       t.textContent = 'This feature is premium. Upgrade to access.';
       document.body.appendChild(t);
       setTimeout(()=> t.classList.add('visible'), 20);
-      setTimeout(()=> { t.classList.remove('visible'); setTimeout(()=> t.remove(),350); }, 2200);
+      setTimeout(()=> { 
+        t.classList.remove('visible'); 
+        setTimeout(()=> t.remove(),350); 
+      }, 2200);
     });
   });
 
@@ -120,14 +117,3 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-
-<!--
-  Notes:
-  - If collabsphere.php is inside 'public/' and dashboard.php is also in 'public/', href="collabsphere.php" is correct.
-  - If your project uses a different webroot or subfolder (e.g. /etudesync/public/), consider using an absolute path like:
-      href="/etudesync/public/collabsphere.php"
-  - Uploaded image you used earlier is available (for reference) at:
-      /mnt/data/1f5368f1-3156-47a6-8117-295468d61947.png
-    You can move that file into public/assets/images/ and reference it as:
-      assets/images/your-file.png
--->

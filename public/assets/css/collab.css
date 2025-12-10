@@ -234,3 +234,46 @@ body {
     padding:22px;
   }
 }
+
+/* Background container fixed behind everything */
+.dashboard-bg {
+  position: fixed;
+  inset: 0;                /* top:0; right:0; bottom:0; left:0; */
+  z-index: -1;
+  overflow: hidden;
+  display: block;
+  background-image: url('public/assets/images/collab-bg.jpg'); /* fallback */
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Make the video fill the container and maintain aspect ratio */
+.dashboard-bg video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  -webkit-transform: translate(-50%, -50%); /* center */
+  transform: translate(-50%, -50%);
+  object-fit: cover; /* cover the whole area, cropping if needed */
+  min-width: 100%;
+  min-height: 100%;
+  pointer-events: none; /* don't capture clicks */
+}
+
+/* Slight dark overlay so text remains readable */
+.dashboard-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  pointer-events: none;
+}
+
+/* small tweak so the page content sits above the background */
+.collab-viewport {
+  position: relative;
+  z-index: 1;
+}
+

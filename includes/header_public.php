@@ -35,7 +35,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
     <!-- simple navigation -->
     <nav class="main-nav" role="navigation" aria-label="Primary">
-      <a href="index.php">Home</a>
       <a href="about.php">About</a>
       <a href="services.php">Services</a>
     </nav>

@@ -27,7 +27,7 @@ try {
 
   $d = $pdo->prepare("DELETE FROM messages WHERE message_id = :id");
   $d->execute([':id'=>$message_id]);
-  echo json_encode(['success'=>true]);
+  echo json_encode(['success'=>true,'deleted'=> (int)$message_id]);
   exit;
 } catch (PDOException $e) {
   echo json_encode(['success'=>false,'error'=>$e->getMessage()]);

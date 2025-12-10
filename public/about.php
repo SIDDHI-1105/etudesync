@@ -76,7 +76,7 @@ require_once __DIR__ . '/../includes/header_public.php';
         <div class="award">
           <div class="award-num">📈</div>
           <div class="award-body">
-            <div class="award-title">1,000,000+ Tasks Completed</div>
+            <div class="award-title">1,00,000+ Tasks Completed</div>
             <div class="award-sub">By ÉtudeSync users in 6 months</div>
           </div>
         </div>
@@ -119,11 +119,11 @@ require_once __DIR__ . '/../includes/header_public.php';
     <div class="about-section join-section">
       <div class="join-inner">
         <div class="join-left">
-          <div class="big-number">Join over <span class="join-count">4,000,000+</span></div>
-          <div class="join-sub">students & teachers on ÉtudeSync</div>
+          <div class="big-number">Join over <span class="join-count">4,00,000+</span></div>
+          <div class="join-sub">students & teachers & professionals on ÉtudeSync</div>
         </div>
         <div class="join-right">
-          <a href="login.php" class="btn primary large">Get started — it's free</a>
+          <a href="login.php" class="btn primary large"> Start Your Journey</a>
         </div>
       </div>
     </div>

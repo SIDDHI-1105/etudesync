@@ -1000,3 +1000,729 @@ body.sidebar-collapsed .profile-compact .profile-meta { display:none; }
   .dash-modules-grid { grid-template-columns: 1fr; gap:12px; }
   .dashboard-glass { padding:18px; transform: translateY(8px); }
 }
+/* =========================
+   ENHANCED LIGHT / GLOW EFFECTS
+   ========================= */
+
+/* Shared button transitions */
+.btn {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    filter 0.2s ease;
+}
+
+/* Primary buttons used on index, about, services, etc. */
+.btn.primary,
+.btn.small,
+.btn.large {
+  box-shadow:
+    0 16px 46px rgba(76, 52, 156, 0.35),
+    0 0 0 rgba(147, 197, 253, 0);
+}
+
+.btn.primary:hover,
+.btn.small:hover,
+.btn.large:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow:
+    0 26px 80px rgba(76, 52, 156, 0.6),
+    0 0 32px rgba(147, 197, 253, 0.7);
+    filter: brightness(1.08);
+}
+
+/* Stronger glow for login/register submit button */
+.btn-login {
+  box-shadow:
+    0 16px 46px rgba(76, 52, 156, 0.45),
+    0 0 18px rgba(147, 197, 253, 0.38);
+}
+
+.btn-login:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 28px 80px rgba(76, 52, 156, 0.75),
+    0 0 36px rgba(147, 197, 253, 0.9);
+  filter: brightness(1.09);
+}
+
+/* Global glass card hover highlight for index, login, register, about, services, dashboard */
+.hero-inner,
+.card,
+.glass-auth-card,
+.glass-card,
+.service-card .card-inner,
+.about-card,
+.module-card {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.26s ease,
+    border-color 0.2s ease;
+  box-shadow: 0 20px 60px rgba(2, 6, 23, 0.55);
+}
+
+/* Light sheen overlay */
+.hero-inner::before,
+.card::before,
+.glass-auth-card::before,
+.glass-card::before,
+.service-card .card-inner::before,
+.about-card::before,
+.module-card::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255,255,255,0.26), transparent 55%),
+    radial-gradient(circle at 88% 100%, rgba(147,197,253,0.24), transparent 60%);
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s ease;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+/* Hover: stronger glow + moving highlight */
+.hero-inner:hover::before,
+.card:hover::before,
+.glass-auth-card:hover::before,
+.glass-card:hover::before,
+.service-card .card-inner:hover::before,
+.about-card:hover::before,
+.module-card:hover::before {
+  opacity: 1;
+  transform: translate3d(-4%, -4%, 0) scale(1.05);
+}
+
+/* Hover: lift + extra glow */
+.hero-inner:hover,
+.card:hover,
+.glass-auth-card:hover,
+.glass-card:hover,
+.service-card .card-inner:hover,
+.about-card:hover,
+.module-card:hover {
+  transform: translateY(-7px);
+  box-shadow:
+    0 32px 90px rgba(2, 6, 23, 0.85),
+    0 0 38px rgba(147, 197, 253, 0.45);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* Optional: keyboard-focus glow for buttons */
+.btn:focus-visible,
+.btn-login:focus-visible {
+  outline: 0;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 0 0 2px rgba(15, 23, 42, 0.85),
+    0 0 0 4px rgba(147, 197, 253, 0.95),
+    0 18px 50px rgba(15, 23, 42, 0.7);
+}
+
+/* base: no underline, but prep pseudo-element */
+.main-nav a {
+  position: relative;
+  text-decoration: none;
+}
+
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 2px; /* adjust to sit just under text */
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  border-radius: 999px;
+  transition: width 0.18s ease;
+}
+
+/* on hover, grow underline from left to right */
+.main-nav a:hover::after {
+  width: 100%;
+}
+
+/* Smaller module cards + stronger dark glass glow */
+.module-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;                 /* was 20px */
+  border-radius: 12px;           /* was 14px */
+  min-height: 120px;             /* was 140px */
+  background: rgba(15, 23, 42, 0.55); /* darker glass */
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow:
+    0 10px 32px rgba(15, 23, 42, 0.85),
+    0 0 0 rgba(15, 23, 42, 0);   /* base, no outer glow yet */
+  text-decoration: none;
+  color: #fff;
+  position: relative;
+  transition:
+    transform 0.2s cubic-bezier(.2,.9,.3,1),
+    box-shadow 0.22s ease,
+    filter 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* stronger + darker hover highlight */
+.module-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow:
+    0 30px 90px rgba(15, 23, 42, 0.95),
+    0 0 26px rgba(15, 23, 42, 0.95); /* darker halo */
+  border-color: rgba(249, 250, 251, 0.35);
+  filter: saturate(1.05) brightness(1.02);
+}
+.module-icon {
+  width: 60px;       /* was 68px */
+  height: 60px;      /* was 68px */
+  object-fit: contain;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* darker directional light for dashboard cards only */
+.module-card::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.10), transparent 55%),
+    radial-gradient(circle at 90% 100%, rgba(30, 64, 175, 0.45), transparent 60%);
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition: opacity 0.25s ease, transform 0.3s ease;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.module-card:hover::before {
+  opacity: 1;
+  transform: translate3d(-3%, -3%, 0) scale(1.05);
+}
+
+/* Neutral, subtle cyan/blue corner glow for dashboard glass container */
+.dashboard-glass {
+  position: relative;
+  overflow: visible; /* let glow extend outside */
+}
+
+.dashboard-glass::before {
+  content: "";
+  position: absolute;
+  inset: -6px;                 /* slightly outside container */
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 0%   0%,   rgba(191, 219, 254, 0.40), transparent 55%),
+    radial-gradient(circle at 100% 0%,   rgba(165, 243, 252, 0.35), transparent 55%),
+    radial-gradient(circle at 0%   100%, rgba(191, 219, 254, 0.35), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(125, 211, 252, 0.38), transparent 55%);
+  filter: blur(14px);
+  opacity: 0.55;
+  animation: dashCornerGlowNeutral 18s ease-in-out infinite alternate;
+}
+
+/* slow, elegant drift for neutral glow */
+@keyframes dashCornerGlowNeutral {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate3d(2px, -2px, 0) scale(1.03);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(-2px, 2px, 0) scale(1.02);
+    opacity: 0.48;
+  }
+}
+
+
+.header-profile {
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(15,23,42,0.65);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.header-profile:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(15,23,42,0.7);
+}
+
+.header-profile .profile-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+.profile-page {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0 80px;
+}
+
+.profile-card {
+  max-width: 640px;
+  width: 100%;
+  padding: 32px;
+  border-radius: 24px;
+  text-align: left;
+}
+
+.profile-info {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.profile-photo img {
+  width: 110px;
+  height: 110px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.profile-form input[type="file"] {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 10px;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.profile-actions {
+  margin-top: 24px;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .profile-info {
+    flex-direction: column;
+    text-align: center;
+  }
+  .profile-actions {
+    text-align: center;
+  }
+}
+
+/* ===== EMERGENCY: Force header completely full-bleed, brand flush-left, icons flush-right ===== */
+/* Append to END of assets/css/style.css */
+
+header.site-topbar {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  height: 78px !important;
+  z-index: 9999 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.08)) !important;
+}
+
+/* Make the header container full width and remove centering */
+header.site-topbar .container {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  padding-left: 0 !important;   /* NO left inset */
+  padding-right: 0 !important;  /* NO right inset (we'll add inner spacing below) */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0 !important;
+}
+
+/* Brand group flush left (no padding whatsoever) */
+header.site-topbar .brand-left {
+  margin: 0 !important;
+  padding-left: 8px !important; /* tiny breathing space — set to 0 if you want true edge-to-edge */
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+/* Remove any extra padding/margin from the brand link */
+header.site-topbar .brand-left .brand-link {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Icons group flush right (with small inset so they are not glued to edge) */
+header.site-topbar .header-controls {
+  margin: 0 !important;
+  padding-right: 12px !important; /* safe inset from right viewport edge */
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+/* Icon / avatar sizing for the taller header */
+header.site-topbar .brand-logo { width:46px !important; height:46px !important; margin-left: 6px !important; }
+header.site-topbar .brand-name { font-size:1.28rem !important; margin-left: 2px !important; }
+
+header.site-topbar .header-icon { font-size:22px !important; padding:10px !important; }
+header.site-topbar .header-profile .profile-avatar { width:44px !important; height:44px !important; }
+
+/* Safety: override any inline style that may push header elements */
+header.site-topbar [style] { /* only supersede margin/padding inline pushes */
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Mobile fallback */
+@media (max-width:720px){
+  header.site-topbar { height:68px !important; }
+  header.site-topbar .container { padding-left:8px !important; padding-right:8px !important; }
+  header.site-topbar .brand-left { padding-left:8px !important; }
+  header.site-topbar .header-controls { padding-right:8px !important; }
+}
+/* ===== PROFILE AVATAR: ensure consistent sizing + no overlap ===== */
+
+/* Header avatar container */
+header.site-topbar .header-profile {
+  width: 44px !important;
+  height: 44px !important;
+  overflow: hidden !important;          /* prevents overflow / half-image */
+  border-radius: 10px !important;
+  display: inline-block !important;
+  flex: 0 0 44px !important;
+  box-sizing: border-box !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  background: rgba(255,255,255,0.03) !important;
+  vertical-align: middle !important;
+  position: relative !important;
+  z-index: 50 !important;
+}
+
+/* Header avatar image (cover mode) */
+header.site-topbar .header-profile .profile-avatar {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;         /* crop center & cover */
+  display: block !important;
+  border-radius: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Profile page / large avatar preview */
+.profile-photo img,
+.profile-card .profile-photo img {
+  width: 110px !important;
+  height: 110px !important;
+  object-fit: cover !important;         /* crop center & cover */
+  border-radius: 14px !important;
+  display: block !important;
+  overflow: hidden !important;
+  border: 2px solid rgba(255,255,255,0.12) !important;
+}
+
+/* If you have another avatar class used during upload preview, cover it too */
+img.profile-avatar-preview {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: inherit !important;
+}
+
+/* defensive: remove accidental inline margin/padding push that caused earlier overlap */
+header.site-topbar .header-profile[style] { margin: 0 !important; padding: 0 !important; }
+
+/* Small-screen tweak */
+@media (max-width:720px){
+  header.site-topbar .header-profile { width: 40px !important; height: 40px !important; }
+  .profile-photo img { width: 92px !important; height: 92px !important; }
+}
+
+/* ===== PROFILE PAGE REFINEMENTS ===== */
+.profile-page {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0 80px;
+}
+
+.profile-card {
+  max-width: 640px;
+  width: 100%;
+  padding: 32px 30px;
+  border-radius: 24px;
+  text-align: left;
+}
+
+/* top section with avatar + text */
+.profile-info {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.profile-photo img {
+  width: 110px;
+  height: 110px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.18);
+}
+
+/* labels + inputs glass style */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-field label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.profile-field input[type="text"],
+.profile-field input[type="number"],
+.profile-field input[type="file"],
+.profile-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(15,23,42,0.75);
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.profile-field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.profile-field input[type="text"]:focus,
+.profile-field input[type="number"]:focus,
+.profile-field input[type="file"]:focus,
+.profile-field textarea:focus {
+  border-color: rgba(124,77,255,0.5);
+  box-shadow: 0 0 0 1px rgba(124,77,255,0.5);
+}
+
+/* actions row (buttons) */
+.profile-actions {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* logout button style */
+.btn.logout {
+  background: linear-gradient(90deg,#ef4444,#b91c1c);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px 16px;
+  border: none;
+  box-shadow: 0 14px 40px rgba(127,29,29,0.45);
+}
+
+.btn.logout:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 24px 60px rgba(127,29,29,0.7);
+}
+
+/* mobile tweaks */
+@media (max-width: 640px) {
+  .profile-card {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+  .profile-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .profile-actions,
+  .profile-logout {
+    justify-content: center;
+  }
+}
+
+/* Accent Glassmorphic Footer — compact + premium */
+.site-footer {
+  position: relative;
+  z-index: 9999;
+
+  /* Accent tinted glass background */
+  background: rgba(124, 77, 255, 0.15); /* accent1 with transparency */
+  border-top: 1px solid rgba(124, 77, 255, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  /* Compact footer spacing */
+  padding: 0.5rem 0;       /* reduced height */
+  font-size: 0.9rem;       /* slightly smaller, clean */
+
+  /* Soft glow */
+  box-shadow: 0 -4px 20px rgba(124, 77, 255, 0.25);
+
+  color: #fff;
+}
+
+/* Center content */
+.site-footer__inner {
+  text-align: center;
+  padding: 0 0.5rem;  /* reduced inner padding for smaller height */
+}
+/* Center the second row (premium modules) on dashboard */
+.dash-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+/* Target only the second row items (the spacer + 2 premium modules) */
+.dash-modules-grid .spacer,
+.dash-modules-grid .premium-row {
+  grid-column: unset;
+}
+
+/* Replace the grid layout with flex ONLY for row 2 */
+.dash-premium-row {
+  grid-column: 1 / -1; /* full width row */
+  display: flex;
+  justify-content: center;
+  gap: 30px;  /* adjust spacing between premium cards */
+  margin-top: 10px;
+}
+
+/* Center the premium row on dashboard */
+.dash-premium-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;   /* adjust spacing between premium items */
+  margin-top: 20px;
+}
+
+/* keep original grid behaviour for the top row */
+.dash-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* Make premium row cards same size as grid cards */
+.dash-premium-row .module-card {
+    width: 100%;
+    max-width: 340px;  /* SAME width as grid cards */
+}
+
+/* ---------- Header tweaks & music button ---------- */
+
+/* reduce header height and tighten spacing */
+header.site-topbar {
+  height: 64px !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  display: flex;
+  align-items: center;
+}
+
+/* smaller brand glyph */
+.site-topbar .brand-logo { width:40px !important; height:40px !important; }
+.site-topbar .brand-name { font-size:1.05rem !important; }
+
+/* header controls gap */
+.header-controls { gap:10px; display:flex; align-items:center; }
+
+/* music button look */
+.header-icon.music-btn {
+  background: linear-gradient(90deg, rgba(124,77,255,0.12), rgba(71,215,211,0.10));
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.header-icon.music-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+.header-icon.music-btn.playing { box-shadow: 0 16px 40px rgba(76,52,156,0.4); }
+
+/* tighten dashboard glass and spacing */
+.dashboard-content { padding: 22px 20px; }
+.dashboard-glass { max-width: 1180px; margin: 0 auto; padding: 20px; border-radius: 20px; }
+
+/* module card sizing parity */
+.module-card { padding: 20px; border-radius: 12px; min-height: 120px; max-width: 320px; }
+.dash-premium-row .module-card { width: 100%; max-width: 320px; }
+
+/* small screens */
+@media (max-width: 720px) {
+  header.site-topbar { height: 58px !important; padding-left:8px !important; padding-right:8px !important; }
+  .site-topbar .brand-logo { width:36px !important; height:36px !important; }
+  .dashboard-glass { padding: 14px; }
+  .dash-premium-row { gap: 18px; }
+}
+
+
+header.site-topbar {
+    height: 56px !important;
+    padding: 6px 12px !important;
+}
+
+.site-topbar .brand-logo {
+    width: 34px !important;
+    height: 34px !important;
+}
+
+.site-topbar .brand-name {
+    font-size: 1rem !important;
+}

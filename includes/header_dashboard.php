@@ -3,6 +3,11 @@
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
+// compute web base so links work when app is under subfolder
+$webBase = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'); // e.g. "/etudesync/public"
+// allow pages to set $body_class before including this header.
+$body_class = $body_class ?? 'page-wrapper';
+// allow pages to set $page_title (already supported)
 ?>
 <!doctype html>
 <html lang="en">
@@ -10,96 +15,56 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title><?= isset($page_title) ? htmlspecialchars($page_title) . ' — ÉtudeSync' : 'ÉtudeSync' ?></title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
-
-  <!-- GSAP (deferred) for dashboard micro-animations -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/gsap.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/ScrollTrigger.min.js"></script>
-
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="assets/css/style.css?v=4" />
-  <link rel="stylesheet" href="assets/css/animations.css?v=1" />
+  <link rel="stylesheet" href="<?= htmlspecialchars($webBase) ?>/assets/css/style.css?v=4" />
 </head>
+<body class="<?= htmlspecialchars($body_class) ?>">
 
-<body class="page-wrapper dashboard-page">
+  <!-- Dashboard video background (keeps same layering as your CSS) -->
+  <div class="dashboard-bg" aria-hidden="true">
+    <video autoplay muted loop playsinline>
+      <source src="<?= htmlspecialchars($webBase) ?>/assets/videos/desk1.mp4" type="video/mp4">
+      <!-- fallback image -->
+    </video>
+    <div class="dashboard-bg-overlay"></div>
+  </div>
 
-  <!-- Background (global slider left as-is for non-dashboard pages) -->
   <div id="bg-slider" class="bg-slider" aria-hidden="true"></div>
   <div class="bg-overlay" aria-hidden="true"></div>
 
-  <header class="site-topbar container" role="banner">
-    <div class="brand-left" role="presentation">
-      <a href="index.php" class="brand-link" style="display:flex;align-items:center;gap:10px;text-decoration:none">
-        <img src="assets/images/logo.jpg" alt="ÉtudeSync logo" class="brand-logo" />
-        <span class="brand-name">ÉtudeSync</span>
-      </a>
-    </div>
-
-    <!-- RIGHT CONTROLS: theme, notifications, profile -->
-    <div class="header-controls" role="region" aria-label="Header controls">
-      <!-- theme toggle -->
-      <button id="headerThemeToggle" class="icon-btn header-icon" aria-label="Toggle theme" title="Toggle theme">🌓</button>
-
-      <!-- notifications (can open notifications page/modal) -->
-      <a href="notifications.php" class="icon-btn header-icon" aria-label="Notifications" title="Notifications">🔔</a>
-
-      <!-- profile button (links to profile page where logout will be) -->
-      <?php if (!empty($_SESSION['user_id'])): ?>
-        <a href="profile.php" class="profile-pill header-icon" title="Profile" aria-label="Profile">
-          <img src="assets/images/profile-placeholder.png" alt="Profile" class="profile-avatar" />
+  <header class="site-topbar" role="banner">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div class="brand-left">
+        <!-- Logo now links to dashboard -->
+        <a href="<?= htmlspecialchars($webBase) ?>/dashboard.php" class="brand-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+          <img src="<?= htmlspecialchars($webBase) ?>/assets/images/logo.jpg" alt="ÉtudeSync logo" class="brand-logo" />
+          <span class="brand-name">ÉtudeSync</span>
         </a>
-      <?php else: ?>
-        <a href="login.php" class="btn primary small">Login</a>
-      <?php endif; ?>
+      </div>
+
+      <div class="header-controls" style="display:flex;align-items:center;gap:10px;">
+        <!-- Music toggle button (play/pause/next behavior handled in footer JS) -->
+        <button id="musicToggle" class="header-icon music-btn" title="Play soothing music" aria-pressed="false" aria-label="Play soothing music" type="button" style="display:flex;align-items:center;justify-content:center;padding:8px;border-radius:10px;border:none;cursor:pointer;">
+          <svg id="musicIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 6v12l10-6L7 6z" fill="currentColor"></path>
+          </svg>
+        </button>
+
+        <!-- Notifications -->
+        <a href="<?= htmlspecialchars($webBase) ?>/notifications.php" class="header-icon" aria-label="Notifications" title="Notifications">🔔</a>
+
+        <?php if (!empty($_SESSION['user_id'])):
+            $sessAvatar = $_SESSION['user_avatar'] ?? 'assets/images/avatar-default.png';
+            $imgUrl = rtrim($webBase, '/') . '/' . ltrim($sessAvatar, '/');
+        ?>
+          <a href="<?= htmlspecialchars($webBase) ?>/profile.php" class="header-icon header-profile" aria-label="Profile" style="padding:0;margin-left:8px;">
+            <img src="<?= htmlspecialchars($imgUrl) ?>" alt="Profile" class="profile-avatar">
+          </a>
+        <?php else: ?>
+          <a href="<?= htmlspecialchars($webBase) ?>/login.php" class="btn primary small">Login</a>
+        <?php endif; ?>
+      </div>
     </div>
   </header>
 
   <main class="main-content page-content">
     <div class="container">
-
-<script>
-/* Small header JS: theme toggle persistence and keyboard accessible */
-(function(){
-  const THEME_KEY = 'etudestyle_pref';
-  const toggle = document.getElementById('headerThemeToggle');
-
-  function applyTheme(t) {
-    if (t === 'light') {
-      document.documentElement.classList.remove('dark-mode');
-      document.documentElement.classList.add('light-mode');
-      document.body.classList.remove('dark-mode');
-      document.body.classList.add('light-mode');
-    } else {
-      document.documentElement.classList.remove('light-mode');
-      document.documentElement.classList.add('dark-mode');
-      document.body.classList.remove('light-mode');
-      document.body.classList.add('dark-mode');
-    }
-  }
-
-  const saved = localStorage.getItem(THEME_KEY) || 'dark';
-  applyTheme(saved);
-
-  if (toggle) {
-    toggle.setAttribute('aria-pressed', saved === 'dark' ? 'true' : 'false');
-
-    toggle.addEventListener('click', () => {
-      const current = document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light';
-      const next = current === 'dark' ? 'light' : 'dark';
-      applyTheme(next);
-      localStorage.setItem(THEME_KEY, next);
-      toggle.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
-    });
-
-    toggle.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggle.click();
-      }
-    });
-  }
-})();
-</script>

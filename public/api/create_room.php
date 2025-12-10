@@ -1,16 +1,58 @@
 <?php
 // public/api/create_room.php
-// returns JSON, uses PDO ($pdo) from includes/db.php
+// supports both JSON (AJAX) and normal form submit (redirect)
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-header('Content-Type: application/json; charset=utf-8');
 
 // Correct path from public/api to project includes/
 require_once __DIR__ . '/../../includes/db.php';
 
+// helper to detect JSON/AJAX request
+function wants_json() {
+    $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+    $xhr = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+    if (stripos($accept, 'application/json') !== false) return true;
+    if (strtolower($xhr) === 'xmlhttprequest') return true;
+    return false;
+}
+
+function respond_json($payload, $status = 200) {
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($payload);
+    exit;
+}
+
+function respond_error_or_redirect($message, $status = 400) {
+    if (wants_json()) {
+        respond_json(['success' => false, 'error' => $message], $status);
+    } else {
+        // store error for the create page and redirect back
+        $_SESSION['error'] = $message;
+        header('Location: ../create_room.php');
+        exit;
+    }
+}
+
+function respond_success_or_redirect($data) {
+    if (wants_json()) {
+        respond_json(array_merge(['success' => true], $data));
+    } else {
+        // redirect to room page (relative to public/api/)
+        $code = $data['room_code'] ?? null;
+        if ($code) {
+            header('Location: ../room.php?code=' . urlencode($code));
+            exit;
+        } else {
+            // fallback: redirect to dashboard
+            header('Location: ../dashboard.php');
+            exit;
+        }
+    }
+}
+
 // validate user
 if (empty($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'error' => 'Authentication required.']);
-    exit;
+    respond_error_or_redirect('Authentication required.', 401);
 }
 
 $host_user_id = (int) $_SESSION['user_id'];
@@ -31,7 +73,7 @@ $topic = trim($_POST['topic'] ?? '');
 $scheduled = null;
 if (!empty($_POST['scheduled_time'])) {
     $scheduled_raw = trim($_POST['scheduled_time']);
-    // datetime-local is usually "YYYY-MM-DDTHH:MM", append seconds
+    // datetime-local is usually "YYYY-MM-DDTHH:MM", append seconds if missing
     $scheduled = str_replace('T', ' ', $scheduled_raw);
     if (!preg_match('/:\d{2}$/', $scheduled)) {
         $scheduled .= ':00';
@@ -40,14 +82,12 @@ if (!empty($_POST['scheduled_time'])) {
 
 // basic validation
 if ($title === '') {
-    echo json_encode(['success' => false, 'error' => 'Title is required.']);
-    exit;
+    respond_error_or_redirect('Title is required.', 400);
 }
 
 // ensure $pdo is present
 if (!isset($pdo) || !$pdo) {
-    echo json_encode(['success' => false, 'error' => 'Database connection missing.']);
-    exit;
+    respond_error_or_redirect('Database connection missing.', 500);
 }
 
 try {
@@ -63,8 +103,7 @@ try {
     } while ($exists && $tries < 8);
 
     if ($exists) {
-        echo json_encode(['success' => false, 'error' => 'Could not generate unique room code. Try again.']);
-        exit;
+        respond_error_or_redirect('Could not generate unique room code. Try again.', 500);
     }
 
     // insert room
@@ -84,21 +123,19 @@ try {
     $stmt->bindValue(':host', $host_user_id, PDO::PARAM_INT);
 
     $stmt->execute();
-    $room_id = (int)$pdo->lastInsertId();
+    $room_id = (int) $pdo->lastInsertId();
 
     // add host as participant
     $stmt2 = $pdo->prepare("INSERT INTO room_participants (room_id, user_id) VALUES (:room, :user)");
     $stmt2->execute([':room' => $room_id, ':user' => $host_user_id]);
 
-    echo json_encode([
-        'success' => true,
+    // success: either return JSON or redirect to room page
+    respond_success_or_redirect([
         'room_id' => $room_id,
         'room_code' => $room_code
     ]);
-    exit;
 
 } catch (PDOException $e) {
     // dev: helpful error; in production hide $e->getMessage()
-    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
-    exit;
+    respond_error_or_redirect('Database error: ' . $e->getMessage(), 500);
 }
