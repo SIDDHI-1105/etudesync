@@ -1,1 +1,3 @@
 [2025-11-23 20:00:59] join_room called. REQUEST_METHOD=POST
+[2025-11-27 05:01:14] join_room called. REQUEST_METHOD=POST
+[2025-11-27 05:01:14] PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'etudesync.rooms' doesn't exist
