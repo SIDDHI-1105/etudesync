@@ -206,6 +206,28 @@ $page_title = 'FocusFlow - Productivity Zone';
             }
         }
 
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+
         /* Pomodoro Timer - white card matching CollabSphere size */
         .pomodoro-section {
             width: 100%;
@@ -422,6 +444,27 @@ $page_title = 'FocusFlow - Productivity Zone';
             background: #188038;
             text-decoration: line-through;
             opacity: 0.7;
+        }
+
+        /* Calendar event type colors */
+        .calendar-event.event-type-assignment {
+            background: #d93025;
+        }
+
+        .calendar-event.event-type-study {
+            background: #1a73e8;
+        }
+
+        .calendar-event.event-type-reminder {
+            background: #f9ab00;
+        }
+
+        .calendar-event.event-type-meeting {
+            background: #7c4dff;
+        }
+
+        .calendar-event.event-type-other {
+            background: #5f6368;
         }
 
         /* More events indicator */
@@ -1058,7 +1101,43 @@ $page_title = 'FocusFlow - Productivity Zone';
         </div>
     </div>
 
+    <!-- Calendar Event Modal -->
+    <div id="calendar-event-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-container" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 id="event-modal-title">Add Event</h3>
+                <button class="modal-close" onclick="closeEventModal()">&times;</button>
+            </div>
+            <form id="calendar-event-form" onsubmit="saveCalendarEvent(event)">
+                <input type="hidden" id="event-id" value="">
+                <input type="hidden" id="event-date" value="">
+
+                <div class="modern-input-group">
+                    <label class="modern-label">Event Title*</label>
+                    <input type="text" id="event-title" class="modern-input" placeholder="e.g., Team Meeting" required>
+                </div>
+
+                <div class="modern-input-group">
+                    <label class="modern-label">Type</label>
+                    <select id="event-type" class="modern-input">
+                        <option value="assignment">📝 Assignment</option>
+                        <option value="study">📚 Study Session</option>
+                        <option value="reminder">⏰ Reminder</option>
+                        <option value="meeting">👥 Meeting</option>
+                        <option value="other">📌 Other</option>
+                    </select>
+                </div>
+
+                <div class="flex-gap-4" style="justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="modern-btn modern-btn-secondary" onclick="closeEventModal()">Cancel</button>
+                    <button type="button" id="delete-event-btn" class="modern-btn" style="background: #dc3545; color: white; display: none;" onclick="deleteCalendarEvent()">Delete</button>
+                    <button type="submit" class="modern-btn modern-btn-primary">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="assets/js/focusflow_complete.js"></script>
+    <script src="assets/js/focusflow_complete.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
